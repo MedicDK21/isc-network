@@ -43,10 +43,20 @@ button.primary{background:#38bdf8;color:black;font-weight:bold}
 
 <!-- HOME -->
 <div id="home" class="section" style="display:block">
-<div class="card">
-<h2>Welcome to ISC Network</h2>
-<p>This system supports public distress signals, contract management, federation structures, underground alliances, and Starfleet command priority routing.</p>
-</div>
+  <div class="card">
+    <h2>Welcome to ISC Network</h2>
+    <p>This system supports public distress signals, contract management, federation structures, underground alliances, and Starfleet command priority routing.</p>
+
+    <div id="authArea">
+      <button onclick="loginWithDiscord()" class="primary">Login with Discord</button>
+      <button onclick="logout()" style="margin-left:8px">Logout</button>
+      <p style="opacity:.85;margin-top:10px" id="whoami">Not logged in</p>
+    </div>
+
+    <div style="margin-top:12px;opacity:.9">
+      <b>Note:</b> Distress signals, contracts, and chat require login so your identity can be recorded.
+    </div>
+  </div>
 </div>
 
 <!-- DISTRESS SIGNAL -->
@@ -160,10 +170,13 @@ button.primary{background:#38bdf8;color:black;font-weight:bold}
 <script>
 // 🔥 YOU MUST REPLACE THIS WITH YOUR OWN FIREBASE CONFIG
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_DOMAIN",
-  projectId: "YOUR_PROJECT_ID",
-};
+  apiKey: "AIzaSyD5wa2MNQFamRN-fWfbVS6bZXJEv5Xb0ME",
+  authDomain: "isc-network-bd26f.firebaseapp.com",
+  projectId: "isc-network-bd26f",
+  storageBucket: "isc-network-bd26f.firebasestorage.app",
+  messagingSenderId: "517796598497",
+  appId: "1:517796598497:web:5bb84af7d08a6a98091da0"
+  };
 
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
@@ -247,27 +260,21 @@ async function loadProfileAndGateUI(user){
   currentProfile = snap.exists ? snap.data() : null;
 
   const role = (currentProfile?.role || 'Member');
-  const orgRole = (currentProfile?.orgRole || 'Member'); // Member | Recruiter | OrgAdmin
+  const orgRole = (currentProfile?.orgRole || 'Member');
   const name = (currentProfile?.discordName || user.displayName || 'Unknown');
 
-  who.textContent = `Logged in as: ${name} (Role: ${role} | OrgRole: ${orgRole})`;
+  if (who) {
+    who.textContent = `Logged in as: ${name} (Role: ${role} | OrgRole: ${orgRole})`;
+  }
 
-  // Show Dispatch tab only for Dispatch/Admin
   dispatchNav.style.display = (role === 'Admin' || role === 'Dispatch') ? 'inline-block' : 'none';
-
-  // Org Dashboard for OrgAdmin/Recruiter/Admin
   orgDashNav.style.display = (role === 'Admin' || orgRole === 'OrgAdmin' || orgRole === 'Recruiter') ? 'inline-block' : 'none';
-
-  // Contract Services queue for ContractServices role OR Admin
   contractServicesNav.style.display = (role === 'Admin' || role === 'ContractServices') ? 'inline-block' : 'none';
 
-  // Start / refresh listeners
   startChatListener();
   startOrgDashListeners();
   startDispatchListeners();
   startContractServicesListener();
-}  (Role: ${role})`;
-  dispatchNav.style.display = (role === 'Admin' || role === 'Dispatch') ? 'inline-block' : 'none';
 }
 
 auth.onAuthStateChanged(async (user) => {
@@ -622,3 +629,4 @@ async function acceptContract(id){
 
 </body>
 </html>
+
