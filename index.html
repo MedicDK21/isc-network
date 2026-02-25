@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UIF Command Portal</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #0b0f1a;
+            color: #ffffff;
+        }
+        header {
+            background: #111827;
+            padding: 20px;
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            letter-spacing: 2px;
+        }
+        nav {
+            display: flex;
+            justify-content: center;
+            background: #1f2937;
+            padding: 10px;
+        }
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin: 0 15px;
+            font-weight: bold;
+        }
+        nav a:hover {
+            color: #38bdf8;
+        }
+        .container {
+            padding: 40px 20px;
+            max-width: 1000px;
+            margin: auto;
+        }
+        .card {
+            background: #1f2937;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: #38bdf8;
+            color: black;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0ea5e9;
+        }
+        footer {
+            text-align: center;
+            padding: 20px;
+            background: #111827;
+            margin-top: 40px;
+            font-size: 14px;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 8px;
+            margin: 5px 0 15px 0;
+            border-radius: 5px;
+            border: none;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    UNITED INTERSTELLAR FEDERATION (UIF)
+</header>
+
+<nav>
+    <a href="#">Home</a>
+    <a href="#">Dispatch</a>
+    <a href="#">Contracts</a>
+    <a href="#">Personnel</a>
+</nav>
+
+<div class="container">
+
+    <div class="card">
+        <h2>Welcome to UIF Command Portal</h2>
+        <p>This is your central operations hub. You can modify this page to manage divisions, contracts, dispatch requests, and internal communications.</p>
+        <button onclick="alert('Dispatch system coming soon!')">Open Dispatch</button>
+    </div>
+
+    <div class="card">
+        <h2>Contract Request Form</h2>
+        <form>
+            <label>Organization Name</label>
+            <input type="text" placeholder="Enter organization name">
+
+            <label>Type of Contract</label>
+            <input type="text" placeholder="Security / Medical / Logistics / Combat">
+
+            <label>Details</label>
+            <textarea rows="4" placeholder="Enter mission details"></textarea>
+
+            <button type="submit">Submit Request</button>
+        </form>
+    </div>
+
+</div>
+
+<footer>
+    © 2026 United Interstellar Federation | Command Network
+</footer>
+
+</body>
+</html>
