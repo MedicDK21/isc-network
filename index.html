@@ -1,120 +1,523 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>UIF Command Portal</title>
-    <style>
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background-color: #0b0f1a;
-            color: #ffffff;
-        }
-        header {
-            background: #111827;
-            padding: 20px;
-            text-align: center;
-            font-size: 24px;
-            font-weight: bold;
-            letter-spacing: 2px;
-        }
-        nav {
-            display: flex;
-            justify-content: center;
-            background: #1f2937;
-            padding: 10px;
-        }
-        nav a {
-            color: white;
-            text-decoration: none;
-            margin: 0 15px;
-            font-weight: bold;
-        }
-        nav a:hover {
-            color: #38bdf8;
-        }
-        .container {
-            padding: 40px 20px;
-            max-width: 1000px;
-            margin: auto;
-        }
-        .card {
-            background: #1f2937;
-            padding: 20px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-        }
-        button {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            background-color: #38bdf8;
-            color: black;
-            font-weight: bold;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #0ea5e9;
-        }
-        footer {
-            text-align: center;
-            padding: 20px;
-            background: #111827;
-            margin-top: 40px;
-            font-size: 14px;
-        }
-        input, textarea {
-            width: 100%;
-            padding: 8px;
-            margin: 5px 0 15px 0;
-            border-radius: 5px;
-            border: none;
-        }
-    </style>
-</head>
-<body>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ISC Command Network</title>
 
-<header>
-    UNITED INTERSTELLAR FEDERATION (UIF)
-</header>
+<!-- Firebase SDKs -->
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+
+<style>
+  body{margin:0;font-family:Arial;background:#0b0f1a;color:white}
+  header{background:#111827;padding:15px;text-align:center;font-size:22px;font-weight:bold}
+  nav{display:flex;justify-content:center;background:#1f2937;padding:10px;flex-wrap:wrap}
+  nav button{margin:5px;padding:8px 15px;border:none;border-radius:6px;background:#374151;color:white;cursor:pointer}
+  nav button:hover{background:#38bdf8;color:black}
+  .section{display:none;padding:20px;max-width:1000px;margin:auto}
+  .card{background:#1f2937;padding:20px;border-radius:10px;margin-bottom:20px}
+  input,textarea,select{width:100%;padding:8px;margin-bottom:10px;border-radius:6px;border:none}
+  button.primary{background:#38bdf8;color:black;font-weight:bold;border:none;border-radius:6px;padding:10px 16px;cursor:pointer}
+  button.primary:hover{opacity:.9}
+  .chat-box{height:300px;overflow-y:auto;background:#111827;padding:10px;border-radius:8px;margin-bottom:10px}
+  .message{margin-bottom:6px}
+  .dispatch{color:#34d399}
+  a{color:#38bdf8}
+</style>
+</head>
+
+<body>
+<header>INTERSTELLAR SUPREME COUNCIL (ISC) COMMAND NETWORK</header>
 
 <nav>
-    <a href="#">Home</a>
-    <a href="#">Dispatch</a>
-    <a href="#">Contracts</a>
-    <a href="#">Personnel</a>
+  <button onclick="showSection('home')">Home</button>
+  <button onclick="showSection('distress')">Distress Signal</button>
+  <button onclick="showSection('contracts')">Submit Contract</button>
+  <button onclick="showSection('chat')">Global Chat</button>
+
+  <button id="contractServicesNav" onclick="showSection('contractServices')" style="display:none">Contract Services</button>
+  <button id="orgDashNav" onclick="showSection('orgDash')" style="display:none">Org Dashboard</button>
+  <button id="dispatchNav" onclick="showSection('dispatch')" style="display:none">Dispatch Panel</button>
+
+  <button onclick="showSection('account')">Account</button>
 </nav>
 
-<div class="container">
+<!-- HOME -->
+<div id="home" class="section" style="display:block">
+  <div class="card">
+    <h2>Welcome to ISC Network</h2>
+    <p>This system supports distress signals, contracts, org verification, contract services, and dispatch routing.</p>
 
-    <div class="card">
-        <h2>Welcome to UIF Command Portal</h2>
-        <p>This is your central operations hub. You can modify this page to manage divisions, contracts, dispatch requests, and internal communications.</p>
-        <button onclick="alert('Dispatch system coming soon!')">Open Dispatch</button>
+    <button onclick="loginWithDiscord()" class="primary">Login with Discord</button>
+    <button onclick="logout()" style="margin-left:8px;padding:10px 16px;border-radius:6px;border:none;cursor:pointer">Logout</button>
+
+    <p style="opacity:.85;margin-top:10px" id="whoami">Not logged in</p>
+
+    <div style="margin-top:12px;opacity:.9">
+      <b>Note:</b> Distress signals, contracts, and chat require login so your identity can be recorded.
     </div>
-
-    <div class="card">
-        <h2>Contract Request Form</h2>
-        <form>
-            <label>Organization Name</label>
-            <input type="text" placeholder="Enter organization name">
-
-            <label>Type of Contract</label>
-            <input type="text" placeholder="Security / Medical / Logistics / Combat">
-
-            <label>Details</label>
-            <textarea rows="4" placeholder="Enter mission details"></textarea>
-
-            <button type="submit">Submit Request</button>
-        </form>
-    </div>
-
+  </div>
 </div>
 
-<footer>
-    © 2026 United Interstellar Federation | Command Network
-</footer>
+<!-- DISTRESS SIGNAL -->
+<div id="distress" class="section">
+  <div class="card">
+    <h2>Send Distress Signal</h2>
+    <form onsubmit="sendDistress(event)">
+      <input type="text" id="ship" placeholder="Ship Amplifying Signal" required />
+      <select id="threat" required>
+        <option value="">Threat Level</option>
+        <option>Imminent</option>
+        <option>Moderate</option>
+        <option>Light</option>
+      </select>
+      <select id="injury" required>
+        <option value="">Injury Tier</option>
+        <option>Tier 1</option>
+        <option>Tier 2</option>
+        <option>Tier 3</option>
+        <option>Knocked Out</option>
+      </select>
+
+      <label><input type="checkbox" required /> I understand I must accept responder friend request</label>
+      <div style="margin-top:10px">
+        <button class="primary" type="submit">Transmit Signal</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- CONTRACTS -->
+<div id="contracts" class="section">
+  <div class="card">
+    <h2>Submit Contract</h2>
+    <form onsubmit="submitContract(event)">
+      <input type="text" id="contractOrg" placeholder="Organization You're With" required />
+      <input type="text" id="contractType" placeholder="Type of Contract" required />
+      <textarea id="contractDetails" placeholder="Details" rows="5" required></textarea>
+      <button class="primary" type="submit">Submit Contract</button>
+    </form>
+  </div>
+</div>
+
+<!-- GLOBAL CHAT -->
+<div id="chat" class="section">
+  <div class="card">
+    <h2>Global Chat</h2>
+    <div class="chat-box" id="chatBox"></div>
+    <input type="text" id="chatInput" placeholder="Type message" />
+    <button onclick="sendMessage()" class="primary">Send</button>
+  </div>
+</div>
+
+<!-- CONTRACT SERVICES -->
+<div id="contractServices" class="section">
+  <div class="card">
+    <h2>Contract Services Queue</h2>
+    <p style="opacity:.85">Visible to Contract Services role (and Admin). Accept a contract to claim it.</p>
+    <div id="csList"></div>
+  </div>
+</div>
+
+<!-- ORG DASHBOARD -->
+<div id="orgDash" class="section">
+  <div class="card">
+    <h2>Org Dashboard</h2>
+    <p style="opacity:.85">Visible to Org Admins/Recruiters (and Admin). Verify new members and manage roster.</p>
+
+    <h3>Pending Verifications</h3>
+    <div id="pendingList"></div>
+
+    <h3 style="margin-top:18px">Org Roster</h3>
+    <div id="rosterList"></div>
+  </div>
+</div>
+
+<!-- DISPATCH PANEL -->
+<div id="dispatch" class="section">
+  <div class="card">
+    <h2>Starfleet Dispatch Panel</h2>
+    <p class="dispatch">Visible to Dispatch role & Admin</p>
+
+    <h3>Incoming Distress Signals</h3>
+    <div id="dispatchSignals"></div>
+
+    <h3 style="margin-top:18px">Incoming Contracts</h3>
+    <div id="dispatchContracts"></div>
+  </div>
+</div>
+
+<!-- ACCOUNT -->
+<div id="account" class="section">
+  <div class="card">
+    <h2>Profile (for Org Verification)</h2>
+    <form onsubmit="submitProfile(event)">
+      <input type="text" id="name" placeholder="Full Name" required />
+      <input type="text" id="handle" placeholder="SC Handlename" required />
+      <input type="text" id="org" placeholder="Organization" required />
+      <input type="number" id="age" placeholder="Age" required />
+      <input type="email" id="email" placeholder="Email" required />
+      <input type="text" id="rank" placeholder="Org Rank" required />
+      <input type="text" id="rsi" placeholder="RSI Citizen Dossier Link" required />
+      <button class="primary" type="submit">Submit Profile</button>
+    </form>
+  </div>
+</div>
+
+<script>
+  // ✅ Paste YOUR Firebase config from Firebase Console → Project settings → Your apps
+  const firebaseConfig = {
+  apiKey: "AIzaSyD5wa2MNQFamRN-fWfbVS6bZXJEv5Xb0ME",
+  authDomain: "isc-network-bd26f.firebaseapp.com",
+  projectId: "isc-network-bd26f",
+  storageBucket: "isc-network-bd26f.firebasestorage.app",
+  messagingSenderId: "517796598497",
+  appId: "1:517796598497:web:5bb84af7d08a6a98091da0"
+  };
+
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
+  const auth = firebase.auth();
+
+  let currentUser = null;
+  let currentProfile = null;
+
+  function showSection(id){
+    document.querySelectorAll('.section').forEach(s=>s.style.display='none');
+    document.getElementById(id).style.display='block';
+  }
+
+  function escapeHtml(str){
+    return String(str)
+      .replaceAll('&','&amp;')
+      .replaceAll('<','&lt;')
+      .replaceAll('>','&gt;')
+      .replaceAll('"','&quot;')
+      .replaceAll("'","&#039;");
+  }
+
+  function requireLogin(){
+    if(!currentUser){
+      alert("Please Login with Discord first.");
+      showSection('home');
+      return false;
+    }
+    return true;
+  }
+
+  function loginWithDiscord(){
+    const provider = new firebase.auth.OAuthProvider('oidc.discord');
+    auth.signInWithPopup(provider).catch(err=>{
+      console.error(err);
+      alert("Discord login failed. Open F12 → Console for details.");
+    });
+  }
+
+  function logout(){ auth.signOut(); }
+
+  auth.onAuthStateChanged(async (user)=>{
+    currentUser = user;
+    currentProfile = null;
+
+    const who = document.getElementById('whoami');
+    const dispatchNav = document.getElementById('dispatchNav');
+    const orgDashNav = document.getElementById('orgDashNav');
+    const contractServicesNav = document.getElementById('contractServicesNav');
+
+    if(!user){
+      who.textContent = "Not logged in";
+      dispatchNav.style.display = "none";
+      orgDashNav.style.display = "none";
+      contractServicesNav.style.display = "none";
+      return;
+    }
+
+    // create/merge base profile
+    await db.collection("users").doc(user.uid).set({
+      uid: user.uid,
+      discordName: user.displayName || null,
+      email: user.email || null,
+      photo: user.photoURL || null,
+      role: "Member",          // Member | Dispatch | ContractServices | Admin | Starfleet | Federation | Underground
+      orgRole: "Member",       // Member | Recruiter | OrgAdmin
+      orgStatus: "Unverified", // Unverified | Pending | Verified
+      updatedAt: Date.now()
+    }, { merge:true });
+
+    const snap = await db.collection("users").doc(user.uid).get();
+    currentProfile = snap.data();
+
+    const role = currentProfile?.role || "Member";
+    const orgRole = currentProfile?.orgRole || "Member";
+    who.textContent = `Logged in as: ${currentProfile?.discordName || "Unknown"} (Role: ${role} | OrgRole: ${orgRole})`;
+
+    dispatchNav.style.display = (role === "Admin" || role === "Dispatch") ? "inline-block" : "none";
+    orgDashNav.style.display = (role === "Admin" || orgRole === "OrgAdmin" || orgRole === "Recruiter") ? "inline-block" : "none";
+    contractServicesNav.style.display = (role === "Admin" || role === "ContractServices") ? "inline-block" : "none";
+
+    startChatListener();
+    startOrgDashListeners();
+    startDispatchListeners();
+    startContractServicesListener();
+  });
+
+  // Chat
+  let chatUnsub = null;
+  function startChatListener(){
+    if(chatUnsub) return;
+    chatUnsub = db.collection('globalChat').orderBy('timestamp')
+      .onSnapshot(snap=>{
+        const box = document.getElementById('chatBox');
+        if(!box) return;
+        box.innerHTML = '';
+        snap.forEach(doc=>{
+          const d = doc.data();
+          box.innerHTML += `<div class="message"><b>${escapeHtml(d.fromName||'Unknown')}:</b> ${escapeHtml(d.message||'')}</div>`;
+        });
+        box.scrollTop = box.scrollHeight;
+      });
+  }
+
+  function sendMessage(){
+    if(!requireLogin()) return;
+    const msg = document.getElementById('chatInput').value.trim();
+    if(!msg) return;
+
+    db.collection('globalChat').add({
+      message: msg,
+      fromUid: currentUser.uid,
+      fromName: currentProfile?.discordName || currentUser.displayName || 'Unknown',
+      timestamp: Date.now()
+    });
+
+    document.getElementById('chatInput').value = '';
+  }
+
+  // Distress
+  function sendDistress(e){
+    e.preventDefault();
+    if(!requireLogin()) return;
+
+    db.collection('distressSignals').add({
+      requester: {
+        uid: currentUser.uid,
+        name: currentProfile?.discordName || currentUser.displayName || 'Unknown',
+        scHandle: currentProfile?.scHandle || '(Not set)',
+        org: currentProfile?.orgName || '(Unverified Org)'
+      },
+      ship: document.getElementById('ship').value,
+      threat: document.getElementById('threat').value,
+      injury: document.getElementById('injury').value,
+      status: "Pending Dispatch",
+      routingStage: "dispatch",
+      createdAt: Date.now(),
+      updatedAt: Date.now()
+    });
+
+    alert("Distress Signal Sent to Dispatch");
+  }
+
+  // Contracts
+  function submitContract(e){
+    e.preventDefault();
+    if(!requireLogin()) return;
+
+    db.collection('contracts').add({
+      requesterName: currentProfile?.discordName || currentUser.displayName || 'Unknown',
+      org: document.getElementById('contractOrg').value,
+      type: document.getElementById('contractType').value,
+      details: document.getElementById('contractDetails').value,
+      status: "Pending Starfleet Dispatch",
+      createdAt: Date.now(),
+      updatedAt: Date.now()
+    });
+
+    alert("Contract Sent to Dispatch");
+  }
+
+  // Profile submit (Org verification)
+  function submitProfile(e){
+    e.preventDefault();
+    if(!requireLogin()) return;
+
+    db.collection('users').doc(currentUser.uid).set({
+      name: document.getElementById('name').value,
+      scHandle: document.getElementById('handle').value,
+      orgName: document.getElementById('org').value,
+      age: Number(document.getElementById('age').value),
+      email: document.getElementById('email').value,
+      orgRank: document.getElementById('rank').value,
+      rsi: document.getElementById('rsi').value,
+      orgStatus: "Pending",
+      updatedAt: Date.now()
+    }, { merge:true });
+
+    alert("Profile submitted - awaiting Org verification/claim.");
+  }
+
+  // Org dashboard listeners
+  let pendingUnsub=null, rosterUnsub=null;
+  function startOrgDashListeners(){
+    if(!currentProfile?.orgName) return;
+
+    const orgName = currentProfile.orgName;
+
+    if(!pendingUnsub){
+      pendingUnsub = db.collection('users')
+        .where('orgName','==',orgName)
+        .where('orgStatus','==','Pending')
+        .onSnapshot(snap=>{
+          const el = document.getElementById('pendingList');
+          if(!el) return;
+
+          if(snap.empty){ el.innerHTML = '<p style="opacity:.8">No pending members.</p>'; return; }
+
+          let html='';
+          snap.forEach(doc=>{
+            const u = doc.data();
+            html += `<div class="card" style="background:#111827">
+              <b>${escapeHtml(u.name || u.discordName || 'Unknown')}</b><br>
+              <span style="opacity:.85">Handle:</span> ${escapeHtml(u.scHandle || '(none)')}<br>
+              <span style="opacity:.85">Rank:</span> ${escapeHtml(u.orgRank || '(none)')}<br>
+              <span style="opacity:.85">RSI:</span> <a href="${escapeHtml(u.rsi || '#')}" target="_blank">Open dossier</a><br>
+              <div style="margin-top:10px">
+                <select id="setOrgRole_${doc.id}">
+                  <option value="Member">Set OrgRole: Member</option>
+                  <option value="Recruiter">Recruiter</option>
+                  <option value="OrgAdmin">Org Admin</option>
+                </select>
+                <div style="margin-top:10px">
+                  <button class="primary" onclick="approveMember('${doc.id}')">Approve</button>
+                  <button onclick="denyMember('${doc.id}')" style="margin-left:8px;padding:10px 16px;border-radius:6px;border:none;cursor:pointer">Deny</button>
+                </div>
+              </div>
+            </div>`;
+          });
+          el.innerHTML = html;
+        });
+    }
+
+    if(!rosterUnsub){
+      rosterUnsub = db.collection('users')
+        .where('orgName','==',orgName)
+        .where('orgStatus','==','Verified')
+        .onSnapshot(snap=>{
+          const el = document.getElementById('rosterList');
+          if(!el) return;
+
+          if(snap.empty){ el.innerHTML = '<p style="opacity:.8">No verified members yet.</p>'; return; }
+
+          let html='';
+          snap.forEach(doc=>{
+            const u = doc.data();
+            html += `<div class="card" style="background:#111827">
+              <b>${escapeHtml(u.name || u.discordName || 'Unknown')}</b>
+              <span style="opacity:.75">(OrgRole: ${escapeHtml(u.orgRole || 'Member')})</span><br>
+              <span style="opacity:.85">Handle:</span> ${escapeHtml(u.scHandle || '(none)')}<br>
+              <button onclick="kickMember('${doc.id}')" style="margin-top:10px;padding:10px 16px;border-radius:6px;border:none;cursor:pointer">Kick from Org</button>
+            </div>`;
+          });
+          el.innerHTML = html;
+        });
+    }
+  }
+
+  async function approveMember(uid){
+    const sel = document.getElementById(`setOrgRole_${uid}`);
+    const newOrgRole = sel ? sel.value : 'Member';
+    await db.collection('users').doc(uid).set({ orgStatus:'Verified', orgRole:newOrgRole, updatedAt:Date.now() }, { merge:true });
+  }
+
+  async function denyMember(uid){
+    await db.collection('users').doc(uid).set({ orgStatus:'Unverified', updatedAt:Date.now() }, { merge:true });
+  }
+
+  async function kickMember(uid){
+    await db.collection('users').doc(uid).set({ orgStatus:'Unverified', orgName:null, orgRole:'Member', updatedAt:Date.now() }, { merge:true });
+  }
+
+  // Dispatch listeners
+  let dsUnsub=null, dcUnsub=null;
+  function startDispatchListeners(){
+    const role = currentProfile?.role || 'Member';
+    if(!(role === 'Admin' || role === 'Dispatch')) return;
+
+    if(!dsUnsub){
+      dsUnsub = db.collection('distressSignals').orderBy('createdAt','desc').limit(25)
+        .onSnapshot(snap=>{
+          const el = document.getElementById('dispatchSignals');
+          if(!el) return;
+          if(snap.empty){ el.innerHTML = '<p style="opacity:.8">No signals.</p>'; return; }
+
+          let html='';
+          snap.forEach(doc=>{
+            const s = doc.data();
+            const r = s.requester || {};
+            html += `<div class="card" style="background:#111827">
+              <b>${escapeHtml(r.name || 'Unknown')}</b> <span style="opacity:.75">(${escapeHtml(r.org || '(org)')})</span><br>
+              <span style="opacity:.85">Ship:</span> ${escapeHtml(s.ship||'')}<br>
+              <span style="opacity:.85">Threat:</span> ${escapeHtml(s.threat||'')} | <span style="opacity:.85">Injury:</span> ${escapeHtml(s.injury||'')}<br>
+              <span style="opacity:.85">Stage:</span> ${escapeHtml(s.routingStage||'dispatch')} | <span style="opacity:.85">Status:</span> ${escapeHtml(s.status||'')}<br>
+            </div>`;
+          });
+          el.innerHTML = html;
+        });
+    }
+
+    if(!dcUnsub){
+      dcUnsub = db.collection('contracts').orderBy('createdAt','desc').limit(25)
+        .onSnapshot(snap=>{
+          const el = document.getElementById('dispatchContracts');
+          if(!el) return;
+          if(snap.empty){ el.innerHTML = '<p style="opacity:.8">No contracts.</p>'; return; }
+
+          let html='';
+          snap.forEach(doc=>{
+            const c = doc.data();
+            html += `<div class="card" style="background:#111827">
+              <b>${escapeHtml(c.type || 'Contract')}</b> <span style="opacity:.75">from ${escapeHtml(c.requesterName || 'Unknown')}</span><br>
+              <span style="opacity:.85">Org:</span> ${escapeHtml(c.org || '(org)')}<br>
+              <span style="opacity:.85">Status:</span> ${escapeHtml(c.status || 'Pending')}<br>
+              <div style="margin-top:10px;opacity:.9">${escapeHtml(c.details || '')}</div>
+            </div>`;
+          });
+          el.innerHTML = html;
+        });
+    }
+  }
+
+  // Contract Services queue (simple)
+  let csUnsub=null;
+  function startContractServicesListener(){
+    const role = currentProfile?.role || 'Member';
+    if(!(role === 'Admin' || role === 'ContractServices')) return;
+
+    if(csUnsub) return;
+    csUnsub = db.collection('contracts')
+      .where('status','==','Open-CS')
+      .orderBy('createdAt','desc')
+      .limit(50)
+      .onSnapshot(snap=>{
+        const el = document.getElementById('csList');
+        if(!el) return;
+        if(snap.empty){ el.innerHTML = '<p style="opacity:.8">No contracts in Contract Services queue.</p>'; return; }
+
+        let html='';
+        snap.forEach(doc=>{
+          const c = doc.data();
+          html += `<div class="card" style="background:#111827">
+            <b>${escapeHtml(c.type || 'Contract')}</b><br>
+            <span style="opacity:.85">Requester:</span> ${escapeHtml(c.requesterName || 'Unknown')}<br>
+            <span style="opacity:.85">Org:</span> ${escapeHtml(c.org || '(org)')}<br>
+            <div style="margin-top:10px;opacity:.9">${escapeHtml(c.details || '')}</div>
+          </div>`;
+        });
+        el.innerHTML = html;
+      });
+  }
+</script>
 
 </body>
 </html>
